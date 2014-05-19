@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Kirk Jarvis"]
   spec.email         = ["zuuzlo@yahoo.com"]
   spec.summary       = %q{Ruby wrapper for accessing Linkshare LinkLocator Direct API using REST. }
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.description   = %q{This wrapper will access the Linkshare LinkLocator Direct Web Service, which is available to all publishers. The authentication of a publisher is done using the publisher’s Web services token. Publishers that do not have a Web services token, can go to Web Services under the Links tab on the Publisher Dashboard and click the button to generate a token. Since the token is used for authentication, it is a required parameter for all requests.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
