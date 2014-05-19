@@ -160,4 +160,80 @@ describe LsLinkdirectAPI do
       expect(response.data.last.linkID).to eq("4027")
     end
   end
+  context "multi page using all" do
+    before do
+      LsLinkdirectAPI.token = '200'
+      xml_response0 = <<-XML
+      <?xml version="1.0" encoding="UTF-8"?>
+        <ns1:getTextLinksResponse xmlns:ns1="http://endpoint.linkservice.linkshare.com/"><ns1:return><ns1:campaignID>0</ns1:campaignID><ns1:categoryID>200321300</ns1:categoryID><ns1:categoryName>Toys</ns1:categoryName><ns1:linkID>3997</ns1:linkID><ns1:linkName>5/15-5/18 10% off Outdoor Toys. Promo Code OUTDOOR10</ns1:linkName><ns1:mid>38605</ns1:mid><ns1:nid>1</ns1:nid><ns1:clickURL>http://click.linksynergy.com/fs-bin/click?id=V8uMkWlCTes&amp;offerid=328293.3997&amp;type=3</ns1:clickURL><ns1:endDate>May 19, 2014</ns1:endDate><ns1:landURL>www.kohls.com/catalog.jsp?N=3000060558</ns1:landURL><ns1:showURL>http://ad.linksynergy.com/fs-bin/show?id=V8uMkWlCTes&amp;bids=328293.3997&amp;type=3</ns1:showURL><ns1:startDate>May 15, 2014</ns1:startDate><ns1:textDisplay>Extra 10% off Outdoor Toys. Promo Code OUTDOOR10</ns1:textDisplay></ns1:return></ns1:getTextLinksResponse>
+      XML
+      stub_request(
+        :get,
+        "http://lld2.linksynergy.com/services/restLinks/getTextLinks/200/-1/-1//05162014/-1/1"
+      ).
+        to_return(
+          status: 200,
+          body: xml_response0,
+          headers: { "Content-type" => "text/xml; charset=UTF-8" }
+        )
+
+        xml_response1 = <<-XML
+      <?xml version="1.0" encoding="UTF-8"?>
+        <ns1:getTextLinksResponse xmlns:ns1="http://endpoint.linkservice.linkshare.com/"><ns1:return><ns1:campaignID>0</ns1:campaignID><ns1:categoryID>0</ns1:categoryID><ns1:categoryName>Default</ns1:categoryName><ns1:linkID>3986</ns1:linkID><ns1:linkName>Free Shipping $50+ with Code FREE50MAY</ns1:linkName><ns1:mid>38605</ns1:mid><ns1:nid>1</ns1:nid><ns1:clickURL>http://click.linksynergy.com/fs-bin/click?id=V8uMkWlCTes&amp;offerid=328293.3986&amp;type=3</ns1:clickURL><ns1:endDate>May 19, 2014</ns1:endDate><ns1:landURL>http://www.kohls.com</ns1:landURL><ns1:showURL>http://ad.linksynergy.com/fs-bin/show?id=V8uMkWlCTes&amp;bids=328293.3986&amp;type=3</ns1:showURL><ns1:startDate>May 16, 2014</ns1:startDate><ns1:textDisplay>Free Shipping $50+ with Code FREE50MAY. Valid 5/16-5/18.</ns1:textDisplay></ns1:return></ns1:getTextLinksResponse>
+      XML
+      stub_request(
+        :get,
+        "http://lld2.linksynergy.com/services/restLinks/getTextLinks/200/-1/-1//05162014/-1/2"
+      ).
+        to_return(
+          status: 200,
+          body: xml_response1,
+          headers: { "Content-type" => "text/xml; charset=UTF-8" }
+        )
+
+        xml_response2 = <<-XML
+      <?xml version="1.0" encoding="UTF-8"?>
+      <ns1:getTextLinksResponse xmlns:ns1="http://endpoint.linkservice.linkshare.com/"><ns1:return><ns1:campaignID>0</ns1:campaignID><ns1:categoryID>200334761</ns1:categoryID><ns1:categoryName>Jewelry</ns1:categoryName><ns1:linkID>3961</ns1:linkID><ns1:linkName>Get Set for Summer Sale</ns1:linkName><ns1:mid>38605</ns1:mid><ns1:nid>1</ns1:nid><ns1:clickURL>http://click.linksynergy.com/fs-bin/click?id=V8uMkWlCTes&amp;offerid=328293.3961&amp;type=3</ns1:clickURL><ns1:endDate>May 21, 2014</ns1:endDate><ns1:landURL>http://www.kohls.com/catalog/jewelry.jsp?CN=4294719765&amp;N=4294719765+3000060490</ns1:landURL><ns1:showURL>http://ad.linksynergy.com/fs-bin/show?id=V8uMkWlCTes&amp;bids=328293.3961&amp;type=3</ns1:showURL><ns1:startDate>May 14, 2014</ns1:startDate><ns1:textDisplay>$1599.99 14k gold certified 1-ct. T.W. diamond solitaire rings. Select styles. reg. $4250. Valid 5/14-5/20.</ns1:textDisplay></ns1:return></ns1:getTextLinksResponse>
+      XML
+      stub_request(
+        :get,
+        "http://lld2.linksynergy.com/services/restLinks/getTextLinks/200/-1/-1//05162014/-1/3"
+      ).
+        to_return(
+          status: 200,
+          body: xml_response2,
+          headers: { "Content-type" => "text/xml; charset=UTF-8" }
+        )
+
+         xml_response3 = <<-XML
+      <?xml version="1.0" encoding="UTF-8"?>
+      <ns1:getTextLinksResponse xmlns:ns1="http://endpoint.linkservice.linkshare.com/"></ns1:getTextLinksResponse>
+      XML
+      stub_request(
+        :get,
+        "http://lld2.linksynergy.com/services/restLinks/getTextLinks/200/-1/-1//05162014/-1/4"
+      ).
+        to_return(
+          status: 200,
+          body: xml_response3,
+          headers: { "Content-type" => "text/xml; charset=UTF-8" }
+        )
+    end
+
+    let(:textlinks) { LsLinkdirectAPI::TextLinks.new }
+    let(:params) { { endDate: '05162014'} }
+    let(:response) { textlinks.get(params) }
+
+    it "first record linkid is 3997" do
+      expect(response.all.first.linkID).to eq("3997")
+    end
+
+    it "last record linkid is 3961" do
+      expect(response.all.last.linkID).to eq("3961")
+    end
+
+    it "has 3 text links" do
+      expect(response.all.size).to eq(3)
+    end
+  end
 end

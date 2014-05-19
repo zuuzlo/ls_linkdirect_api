@@ -49,15 +49,15 @@ module LsLinkdirectAPI
       rescue Timeout::Error
         raise ConnectionError.new("Timeout error (#{timeout}s)")
       end
-      process(response, "get#{class_name}Response")
+      process(response, "#{class_name}", params)
     end
 
     private
 
-    def process(response, response_name)
+    def process(response, response_name, params)
       case response.code
       when 200, 201, 204
-        APIResponse.new(response, response_name)
+        APIResponse.new(response, response_name, params)
       when 400, 404
         raise InvalidRequestError.new(response.message, response.code)
       when 401

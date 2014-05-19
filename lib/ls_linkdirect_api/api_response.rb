@@ -4,19 +4,22 @@ module LsLinkdirectAPI
   class APIResponse
     attr_reader :data, :request
 
-    def initialize(response, response_name)
+    def initialize(response, response_name, params)
       @request = response.request
-      result = response[ response_name ]
-      body = parse(response.body)
+      @response_name = response_name
+      @params = params
+      result = response[ "get#{response_name}Response" ]
       @data = parse(result["return"])
     end
 
     def all
-      while parse(result["return"]) != []
-        uri = Addressable::URI.parse(request.uri)
-        next_page_response = LsLinkdirectAPI::TextLinks.new.request(uri.origin + uri.path, uri.query_values)
-        #@meta = next_page_response.meta
+      get_next_page = true
+      while get_next_page
+        cls = Object.const_get('LsLinkdirectAPI').const_get(@response_name)
+        @params[:page] += 1
+        next_page_response = cls.new.get(@params)
         @data += next_page_response.data
+        get_next_page = false if next_page_response.data == []
       end
       @data
     end
