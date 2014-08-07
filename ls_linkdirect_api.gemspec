@@ -20,8 +20,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "addressable", "~> 2.3.5"
   spec.add_dependency "htmlentities", "~> 4.3.1"
-  spec.add_dependency "httparty", "~> 0.11.0"
-  spec.add_dependency "recursive-open-struct", "~> 0.4.3"
+  spec.add_dependency "httparty", "~> 0.13.1"
+  spec.add_dependency "recursive-open-struct", "~> 0.5.0"
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
